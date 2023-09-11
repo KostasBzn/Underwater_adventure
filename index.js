@@ -4,6 +4,10 @@ function displayLife(playerLife) {
   return "* ".repeat(playerLife);
 }
 
+function clearConsole() {
+  console.log('\x1Bc');
+}
+
 function askQuestion(question, choices, correctChoice) {
   console.log(question);
   for (let i = 0; i < choices.length; i++) {
@@ -17,13 +21,7 @@ function askQuestion(question, choices, correctChoice) {
     return false;
   }
 
-  if (userChoice === correctChoice) {
-    console.log(`Correct!`);
-    return true;
-  } else {
-    console.log("Wrong choice.");
-    return false;
-  }
+  return userChoice === correctChoice; // Return true if the user's choice is correct.
 }
 
 function playGame() {
@@ -36,33 +34,67 @@ function playGame() {
     {
       question: "You find a mysterious door. What do you do?",
       choices: ["Open it", "Leave it alone"],
-      correctChoice: 1, 
+      correctChoice: 1,
+      nextQuestionIfCorrect: 1, 
+      nextQuestionIfIncorrect: 2, 
     },
     {
       question: "Inside the door, you see a treasure chest. How do you proceed?",
       choices: ["Open the chest", "Walk away"],
-      correctChoice: 0, 
+      correctChoice: 0,
+      nextQuestionIfCorrect: 3,
+      nextQuestionIfIncorrect: 4,
     },
     {
-
-    }
+      question: "You walk outside the path intended. You see another two doors, which one do you choose?",
+      choices: ["Red doors", "Blue Doors"],
+      correctChoice: 0,
+      nextQuestionIfCorrect: 5,
+      nextQuestionIfIncorrect: 6,
+    },
+    {
+      question: "You unlock a secret passage. Where does it lead?",
+      choices: ["A treasure room", "A dangerous trap"],
+      correctChoice: 0,
+      nextQuestionIfCorrect: 7,
+      nextQuestionIfIncorrect: 8,
+    },
+    {
+      question: "You fall into a dangerous trap. How do you escape?",
+      choices: ["Use your wits", "Call for help"],
+      correctChoice: 0,
+      nextQuestionIfCorrect: 9,
+      nextQuestionIfIncorrect: 10,
+    },
+  
   ];
 
-  for (const { question, choices, correctChoice } of questions) {
-    if (!askQuestion(question, choices, correctChoice)) {
+  for (let currentQuestionIndex = 0; currentQuestionIndex < questions.length;) {
+    const { question, choices, correctChoice, nextQuestionIfCorrect, nextQuestionIfIncorrect } = questions[currentQuestionIndex];
+
+    clearConsole(); 
+
+    console.log(`Breathe: ${displayLife(playerLife)}`);
+    
+    if (askQuestion(question, choices, correctChoice)) {
+      console.log("Correct! You proceed.");
+      currentQuestionIndex = nextQuestionIfCorrect;
+    } else {
+      console.log("Incorrect! You lose one life.");
       playerLife--;
-      console.log(`Breathe: ${displayLife(playerLife)}`);
       if (playerLife === 0) {
-        console.clear();
+        clearConsole();
         console.log("Game over");
         return;
       }
+      currentQuestionIndex = nextQuestionIfIncorrect;
     }
   }
 
-  console.clear();
+  clearConsole();
   console.log("Congratulations! You've completed the game.");
 }
 
 playGame();
+
 
